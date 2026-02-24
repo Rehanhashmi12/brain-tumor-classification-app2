@@ -1,4 +1,3 @@
-
 import streamlit as st
 import numpy as np
 import cv2
@@ -12,20 +11,23 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------- GLASS CSS ----------
+# ---------- PREMIUM GLASS CSS ----------
 st.markdown("""
 <style>
 
-.stApp {
-background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+/* Tech gradient background */
+.stApp{
+background: radial-gradient(circle at top,#0f2027,#203a43,#2c5364);
 }
 
-/* Big hero title */
+/* HERO TITLE */
 .big-title{
-font-size:60px;
-font-weight:800;
+font-size:68px;
+font-weight:900;
 text-align:center;
 color:white;
+letter-spacing:1px;
+text-shadow:0 0 25px rgba(0,255,255,0.6);
 margin-bottom:10px;
 }
 
@@ -33,22 +35,34 @@ margin-bottom:10px;
 text-align:center;
 color:#cbd5e1;
 margin-bottom:40px;
+font-size:18px;
 }
 
-/* Glass card */
+/* GLASS CARD */
 .card{
-padding:25px;
-border-radius:20px;
+padding:28px;
+border-radius:24px;
 background:rgba(255,255,255,0.08);
-backdrop-filter:blur(15px);
+backdrop-filter:blur(18px) saturate(180%);
+-webkit-backdrop-filter:blur(18px) saturate(180%);
 border:1px solid rgba(255,255,255,0.15);
+box-shadow:0 10px 40px rgba(0,0,0,0.45);
 margin-top:20px;
 }
 
+/* Prediction glow */
 .result{
-font-size:32px;
+font-size:34px;
 font-weight:700;
-color:#00ffd5;
+color:#00ffe5;
+text-shadow:0 0 15px rgba(0,255,229,0.6);
+}
+
+/* Sidebar glass */
+section[data-testid="stSidebar"]{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(18px);
+border-right:1px solid rgba(255,255,255,0.1);
 }
 
 </style>
@@ -68,7 +82,6 @@ def load_trained_model():
     return load_model("resnet_finetuned.h5")
 
 model = load_trained_model()
-
 class_names = ["Glioma", "Meningioma", "No Tumor", "Pituitary"]
 
 # =========================
@@ -94,7 +107,7 @@ if page == "Predict":
         img = img/255.0
         img = img.reshape(1,224,224,3)
 
-        with st.spinner("Analyzing MRI..."):
+        with st.spinner("🧠 AI analyzing MRI..."):
             prediction = model.predict(img)
 
         predicted_class = class_names[np.argmax(prediction)]
@@ -107,6 +120,7 @@ if page == "Predict":
             st.metric("Confidence", f"{confidence:.2f}%")
 
             st.subheader("Class Probabilities")
+            st.progress(float(np.max(prediction)))
             st.bar_chart(prediction[0])
 
             st.markdown('</div>', unsafe_allow_html=True)
@@ -129,15 +143,14 @@ This application uses a **fine-tuned ResNet50 deep learning model** trained on b
 • Pituitary  
 • No Tumor  
 
-### Model Performance
-✔ Transfer learning + fine-tuning  
-✔ Image augmentation  
-✔ Achieved improved accuracy after fine-tuning  
+### Model Improvements
+✔ Transfer learning  
+✔ Fine-tuning  
+✔ Data augmentation  
+✔ Class imbalance handling  
 
-### Use Case
-This tool demonstrates how AI can assist doctors in early brain tumor detection.
+### Impact
+Demonstrates how AI can support radiologists in faster and more accurate brain tumor screening.
 """)
 
     st.markdown('</div>', unsafe_allow_html=True)
-
-
